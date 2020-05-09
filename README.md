@@ -1,5 +1,7 @@
 # magicFlash
 
+Please look at the wiki to see the example images
+
 ## Problems with fill flash
 
 The flash adds light which helps to brighten shadows and reduce the difference with ambiant light. 
