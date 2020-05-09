@@ -60,6 +60,17 @@ F - (P/F) * F
 
 But with a ratio P/F which is smoothed with a gaussian filter whose standard deviaton can be set. Again this does NOT smoot the details of the image, but it will have an impact on the edges of the shadows
 
+# use for masking
+
+It is possible to compute a shadow image which represents the relative difference, as explained above. 
+
+# Possible uses
+
+* Allow to acentuate the effects of a flash in bright sun light. This may be off camera flash 
+* fill flash for a portrait, so disminish the effects of the shadow
+* mix ambient/flash light at will
+
+
 
 
 
