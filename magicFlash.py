@@ -46,7 +46,7 @@ def filter_diff(res, b, colour, sigma):
     b0 = diff2 >  0
     filt_image = b2.copy()
     filt_image[b0] = diff1[b0]/diff2[b0]
-    filt_image = filt_image * b2
+    filt_image[b0] = filt_image[b0] * b2[b0]
     filt_image[np.logical_not(b0)] = res2[np.logical_not(b0)]
     return filt_image
 
@@ -108,9 +108,23 @@ b = b/maxv
 res = 20*(b - a)
 sup0(res)
 
-filter_r = filter_diff(res, b, 0, 5.8)
-filter_g = filter_diff(res, b, 1, 5.8) 
-filter_b = filter_diff(res, b, 2, 5.8)
+res_avg = res[:,:,0] + res[:,:,1] + res[:,:,2]
+b_avg = b[:,:,0] + b[:,:,1] + b[:,:,2]
+
+sigma = 6
+res_avg1 = scipy.ndimage.gaussian_filter(res_avg, sigma)
+b_avg1 = scipy.ndimage.gaussian_filter(b_avg, sigma)
+
+ratio = np.ones(b_avg1.shape)
+b0 = ratio > 0
+
+ratio[b0] = res_avg1[b0]/b_avg1[b0]
+ratio3 = np.stack([ratio, ratio, ratio], axis=2)
+b_avg2 = ratio3 * b
+
+filter_r = filter_diff(res, b_avg2, 0, sigma)
+filter_g = filter_diff(res, b_avg2, 1, sigma) 
+filter_b = filter_diff(res, b_avg2, 2, sigma)
 
 img3 = np.stack(
     [filter_r, filter_g, filter_b], axis=2
@@ -118,4 +132,8 @@ img3 = np.stack(
 shadows = compute_shadows(a, b)
 tif.imsave('D:/images/fillfllash/Capture/only_flash.tif', uint16_gamma(res))
 tif.imsave('D:/images/fillfllash/Capture/clean_result.tif', uint16_gamma(img3))
-tif.imsave('D:/images/fillfllash/Capture/shadows.tif', uint16_gamma(shadows))
+
+shadow_compute = 0
+if shadow_compute:
+    shadows = compute_shadows(a, b)
+    tif.imsave('D:/images/fillfllash/Capture/shadows.tif', uint16_gamma(shadows))
